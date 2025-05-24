@@ -1,7 +1,3 @@
-Here's an updated and enhanced `README.md` for **LogiChain**, prioritizing documentation, application flow, and visual aids to provide a comprehensive overview of the project.
-
----
-
 # LogiChain
 
 <div align="center">
@@ -245,6 +241,4 @@ LogiChain is built on the shoulders of giants:
 * [Sui Blockchain](https://sui.io/)
 * [Wormhole Protocol](https://wormhole.com/)
 
----
 
-Feel free to customize the paths to images and links to match your project's structure and resources. Let me know if you need assistance with any specific sections or further enhancements!
