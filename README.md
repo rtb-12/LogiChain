@@ -1,7 +1,7 @@
 # LogiChain
 
 <div align="center">
-  <img src="docs/assets/logichain_Logo.png" alt="LogiChain Logo" width="200">
+  <img src="docs/assets/LogiChain_Logo.png" alt="LogiChain Logo" width="200">
   <h3>Decentralized Multi-Chain CI/CD Orchestration Platform</h3>
   <p>Build, test, and deploy with trustless infrastructure powered by Sui and Wormhole</p>
 
@@ -110,16 +110,6 @@ LogiChain's architecture consists of four primary components:
 * GitHub account with repository access
 * Sui CLI and wallet (testnet or devnet)
 * Wormhole Guardian VAA Verification key
-
-### Repository Structure
-
-```
-LogiChain/
-├── LogiChain_Frontend/     # React TypeScript frontend application
-├── LogiChain_Backend/      # Express.js backend services
-├── LogiChain_Contracts/    # Sui Move smart contracts
-├── docs/                   # Documentation and architecture diagrams
-```
 
 ### Installation
 
