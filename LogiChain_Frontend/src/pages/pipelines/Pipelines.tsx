@@ -4,15 +4,24 @@ import {
   Plus,
   Git,
   Clock,
-  CheckCircle,
-  XCircle,
   PlayFill,
 } from "react-bootstrap-icons";
 import { LineChart, BarChart } from "@mui/x-charts";
 import Editor from "@monaco-editor/react";
 
+interface Pipeline {
+  id: number;
+  name: string;
+  status: string;
+  duration: string;
+  lastRun: string;
+  repo: string;
+  stages: string[];
+  logs: string;
+}
+
 const PipelinesPage = () => {
-  const [selectedPipeline, setSelectedPipeline] = useState(null);
+  const [selectedPipeline, setSelectedPipeline] = useState<Pipeline | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
 
@@ -63,6 +72,43 @@ const PipelinesPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
+        {/* Pipeline Details Modal */}
+        {selectedPipeline && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
+            <div className="bg-white rounded-xl p-6 max-w-2xl w-full">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">{selectedPipeline.name}</h2>
+                <button 
+                  onClick={() => setSelectedPipeline(null)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="mb-4">
+                <p><strong>Repository:</strong> {selectedPipeline.repo}</p>
+                <p><strong>Status:</strong> {selectedPipeline.status}</p>
+                <p><strong>Last Run:</strong> {selectedPipeline.lastRun}</p>
+                <p><strong>Duration:</strong> {selectedPipeline.duration}</p>
+              </div>
+              <div className="border rounded p-4 bg-gray-50 mb-4">
+                <h3 className="text-md font-semibold mb-2">Logs</h3>
+                <pre className="whitespace-pre-wrap text-sm">
+                  {selectedPipeline.logs}
+                </pre>
+              </div>
+              <div className="flex justify-end">
+                <button 
+                  onClick={() => setSelectedPipeline(null)}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-md"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">CI/CD Pipelines</h1>

@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import WormholeConnect from "@wormhole-foundation/wormhole-connect";
 import type {
   WormholeConnectConfig,
   WormholeConnectTheme,
 } from "@wormhole-foundation/wormhole-connect";
-import { ArrowLeft, CurrencyExchange } from "react-bootstrap-icons";
+import {  CurrencyExchange } from "react-bootstrap-icons";
 
 interface PaymentProps {
   onComplete?: (txHash: string) => void;
   onCancel?: () => void;
 }
 
-const PaymentComponent = ({ onComplete, onCancel }: PaymentProps) => {
+const PaymentComponent = ({ onComplete }: PaymentProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,34 +22,43 @@ const PaymentComponent = ({ onComplete, onCancel }: PaymentProps) => {
     ui: {
       title: "LogiChain Payments",
     },
-   
-    onSend: () => {
-      console.log("Transaction initiated");
-      setIsLoading(true);
-    },
-    onComplete: (txHash) => {
-      console.log("Transaction completed", txHash);
-      setIsLoading(false);
-     
-      if (onComplete && typeof txHash === "string") {
-        onComplete(txHash);
-      }
-    },
-    onError: (error) => {
-      console.error("Transaction failed", error);
-      setIsLoading(false);
-      setError(error.toString());
-    },
   };
+  
+  // Set up event listeners for Wormhole Connect events
+  useEffect(() => {
+    const handleTransferSuccess = (event: Event) => {
+      const customEvent = event as CustomEvent<{txHash?: string}>;
+      console.log("Transaction completed", customEvent.detail);
+      setIsLoading(false);
+      
+      if (onComplete && customEvent.detail && customEvent.detail.txHash) {
+        onComplete(customEvent.detail.txHash);
+      }
+    };
+    
+    const handleTransferError = (event: Event) => {
+      const customEvent = event as CustomEvent<unknown>;
+      console.error("Transaction failed", customEvent.detail);
+      setIsLoading(false);
+      setError(String(customEvent.detail));
+    };
+
+    // Add event listeners
+    document.addEventListener("wormhole:transfer:success", handleTransferSuccess);
+    document.addEventListener("wormhole:transfer:error", handleTransferError);
+
+    // Clean up
+    return () => {
+      document.removeEventListener("wormhole:transfer:success", handleTransferSuccess);
+      document.removeEventListener("wormhole:transfer:error", handleTransferError);
+    };
+  }, [onComplete]);
 
 
   const theme: WormholeConnectTheme = {
     mode: "light",                            
     primary: "#6366f1", 
     secondary: "#8b5cf6",
-    accent: "#10b981",
-    background: "#ffffff",
-    fontFamily: "Inter, system-ui, sans-serif",
   };
 
   return (
@@ -57,18 +66,16 @@ const PaymentComponent = ({ onComplete, onCancel }: PaymentProps) => {
       <div className="max-w-4xl mx-auto">
         <header className="mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold flex items-center gap-2">
+            <h1 className="text-3xl font-bold flex items-center gap-2" />
               <CurrencyExchange className="text-indigo-600" /> Cross-Chain
               Payment
-            </h1>
-            {onCancel && (
-              <button
-                onClick={onCancel}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeft /> Back
-              </button>
-            )}
+          {/* Wormhole Connect Widget */}
+          <div className="p-6">
+            <WormholeConnect 
+              config={config} 
+              theme={theme} 
+            />
+          </div>
           </div>
           <p className="mt-2 text-gray-600">
             Transfer tokens across different blockchains to complete your
@@ -90,7 +97,10 @@ const PaymentComponent = ({ onComplete, onCancel }: PaymentProps) => {
 
           {/* Wormhole Connect Widget */}
           <div className="p-6">
-            <WormholeConnect config={config} theme={theme} />
+            <WormholeConnect 
+              config={config} 
+              theme={theme} 
+            />
           </div>
 
           {isLoading && (

@@ -29,11 +29,15 @@ export default function ConnectPage() {
     }
   };
 
-  const connectToWallet = async (walletName) => {
+  interface WalletName {
+    name: "Suiet" | "Sui Wallet" | "Slush" | "Phantom" | "OKX Wallet";
+  }
+
+  const connectToWallet = async (walletName: WalletName["name"]): Promise<void> => {
     try {
       await wallet.select(walletName);
       setShowWalletOptions(false);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Failed to connect to wallet:", error);
     }
   };
@@ -68,7 +72,7 @@ export default function ConnectPage() {
     setGithubConnected(false);
   };
 
-  const availableWallets = [
+  const availableWallets: { name: WalletName["name"]; displayName: string }[] = [
     { name: "Suiet", displayName: "Suiet" },
     { name: "Sui Wallet", displayName: "Sui Wallet" },
     { name: "Slush", displayName: "Slush" },

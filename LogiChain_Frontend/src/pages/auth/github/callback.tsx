@@ -39,7 +39,7 @@ export default function GitHubCallback() {
         console.log("GitHub code received:", code);
         console.log("GitHub authentication simulation successful!");
 
-        localStorage.setItem("githubCode", code);
+        localStorage.setItem("githubCode", code as string);
 
         // Store mock token and user data
         localStorage.setItem(

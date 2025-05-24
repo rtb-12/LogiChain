@@ -7,9 +7,25 @@ import {
 } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
+type Attestation = {
+  id: string;
+  repository: string;
+  commit: string;
+  pipelineStep: string;
+  runner: string;
+  timestamp: string;
+  status: string;
+  outputHash: string;
+  artifactLink: string;
+  chain: string;
+  signature: string;
+  verificationMethod: string;
+  metadata: string;
+};
+
 const AttestationsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedAttestation, setSelectedAttestation] = useState(null);
+  const [selectedAttestation, setSelectedAttestation] = useState<Attestation | null>(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const [chainFilter, setChainFilter] = useState("all");
 

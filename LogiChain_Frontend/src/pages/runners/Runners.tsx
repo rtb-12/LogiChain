@@ -16,10 +16,32 @@ import {
 import { LineChart} from "@mui/x-charts";
 import Editor from "@monaco-editor/react";
 
+interface RunnerJob {
+  id: number;
+  status: string;
+  duration: string;
+  project: string;
+}
+
+interface Runner {
+  id: string;
+  status: string;
+  specs: {
+    cpu: string;
+    ram: string;
+    storage: string;
+  };
+  executor: string;
+  tags: string[];
+  staked: number;
+  rewards: number;
+  jobs: RunnerJob[];
+}
+
 const RunnersPage = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [selectedRunner, setSelectedRunner] = useState(null);
+  const [selectedRunner, setSelectedRunner] = useState<Runner | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("all");
   const [stakeAmount, setStakeAmount] = useState("");

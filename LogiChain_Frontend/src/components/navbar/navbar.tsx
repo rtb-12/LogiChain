@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Wallet2,
@@ -20,23 +20,27 @@ const Navbar = () => {
     if (wallet.status === "connected") {
       await wallet.disconnect();
     } else {
-      // Instead of trying to select without parameters, show the wallet options
       setShowWalletOptions(true);
     }
   };
 
+  interface WalletOption {
+    name: string;
+    displayName: string;
+  }
+
   // Function to connect to a specific wallet
-  const connectToWallet = async (walletName) => {
+  const connectToWallet = async (walletName: string): Promise<void> => {
     try {
       await wallet.select(walletName);
       setShowWalletOptions(false);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Failed to connect to wallet:", error);
     }
   };
 
   // Available wallets based on the error message
-  const availableWallets = [
+  const availableWallets: WalletOption[] = [
     { name: "Suiet", displayName: "Suiet" },
     { name: "Sui Wallet", displayName: "Sui Wallet" },
     { name: "Slush", displayName: "Slush" },
@@ -96,7 +100,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-2">
                 <div className="bg-indigo-50 px-3 py-1 rounded-md">
                   <span className="text-sm font-medium text-indigo-700">
-                    {addressEllipsis(wallet.account?.address)}
+                    {addressEllipsis(wallet.account?.address ?? "")}
                   </span>
                 </div>
                 <button

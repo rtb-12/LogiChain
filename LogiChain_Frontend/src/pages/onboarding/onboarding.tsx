@@ -1,9 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Github,
   Check,
-  Gear,
-  LockFill,
   Clipboard,
   CurrencyExchange,
 } from "react-bootstrap-icons";
@@ -11,10 +9,25 @@ import PaymentComponent from "./payment";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 
+interface Repository {
+  id: string | number;
+  name: string;
+  description: string;
+  updated_at: string;
+  visibility: string;
+}
+
 const OnboardingFlow = () => {
+  const steps = [
+    { title: "Connect Repos", icon: <Github size={16} /> },
+    { title: "Configure Workflows", icon: <Clipboard size={16} /> },
+    { title: "Set Secrets", icon: <Check size={16} /> },
+    { title: "Review & Pay", icon: <CurrencyExchange size={16} /> }
+  ];
+
   const [currentStep, setCurrentStep] = useState(0);
-  const [repos, setRepos] = useState([]);
-  const [selectedRepos, setSelectedRepos] = useState([]);
+  const [repos, setRepos] = useState<Repository[]>([]);
+  const [selectedRepos, setSelectedRepos] = useState<Array<Repository['id']>>([]);
   const [workflowConfig, setWorkflowConfig] = useState({});
   const [secrets, setSecrets] = useState({});
   const [loading, setLoading] = useState(false);
@@ -23,25 +36,25 @@ const OnboardingFlow = () => {
   const [paymentComplete, setPaymentComplete] = useState(false);
   const [txHash, setTxHash] = useState("");
 
-  const steps = [
-    { title: "Repository Selection", icon: <Github className="w-4 h-4" /> },
-    { title: "Pipeline Setup", icon: <Gear className="w-4 h-4" /> },
-    { title: "Environment Secrets", icon: <LockFill className="w-4 h-4" /> },
-    { title: "Review & Confirm", icon: <Check className="w-4 h-4" /> },
-  ];
-
-
   const connectGitHub = async () => {
     try {
       const response = await axios.get("/api/github/repositories");
       setRepos(response.data);
     } catch (err) {
-      setError("Failed to fetch repositories");
+      setError(`Failed to fetch repositories: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
 
-  const toggleRepoSelection = (repo) => {
-    setSelectedRepos((prev) =>
+  interface Repository {
+    id: string | number;
+    name: string;
+    description: string;
+    updated_at: string;
+    visibility: string;
+  }
+
+  const toggleRepoSelection = (repo: Repository): void => {
+    setSelectedRepos((prev: Array<Repository['id']>) =>
       prev.includes(repo.id)
         ? prev.filter((id) => id !== repo.id)
         : [...prev, repo.id]
@@ -49,23 +62,30 @@ const OnboardingFlow = () => {
   };
 
 
-  const handleWorkflowChange = (value, repoId) => {
-    setWorkflowConfig((prev) => ({
+  interface WorkflowConfig {
+    [repoId: string | number]: string;
+  }
+
+  const handleWorkflowChange = (value: string, repoId: Repository['id']): void => {
+    setWorkflowConfig((prev: WorkflowConfig) => ({
       ...prev,
       [repoId]: value,
     }));
   };
 
 
-  const handleSecretChange = (name, value) => {
-    setSecrets((prev) => ({
+  interface Secrets {
+    [key: string]: string;
+  }
+
+  const handleSecretChange = (name: string, value: string): void => {
+    setSecrets((prev: Secrets) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-
-  const handlePaymentComplete = (hash) => {
+  const handlePaymentComplete = (hash: string): void => {
     setTxHash(hash);
     setPaymentComplete(true);
     setShowPayment(false);
@@ -83,7 +103,8 @@ const OnboardingFlow = () => {
       });
       setCurrentStep((prev) => prev + 1);
     } catch (err) {
-      setError("Configuration failed. Please check your settings.");
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(`Configuration failed: ${errorMessage}. Please check your settings.`);
     }
     setLoading(false);
   };
@@ -200,7 +221,17 @@ const OnboardingFlow = () => {
 };
 
 
-const RepositorySelection = ({ repos, selectedRepos, onSelect, onConnect }) => (
+const RepositorySelection = ({ 
+  repos, 
+  selectedRepos, 
+  onSelect, 
+  onConnect 
+}: { 
+  repos: Repository[]; 
+  selectedRepos: Array<Repository['id']>;
+  onSelect: (repo: Repository) => void;
+  onConnect: () => void;
+}) => (
   <div>
     <h2 className="text-2xl font-bold mb-6">Connect Repositories</h2>
     <button
@@ -244,7 +275,15 @@ const RepositorySelection = ({ repos, selectedRepos, onSelect, onConnect }) => (
   </div>
 );
 
-const PipelineConfiguration = ({ repos, workflowConfig, onChange }) => (
+const PipelineConfiguration = ({ 
+  repos, 
+  workflowConfig, 
+  onChange 
+}: { 
+  repos: Repository[]; 
+  workflowConfig: { [repoId: string | number]: string }; 
+  onChange: (value: string, repoId: Repository['id']) => void;
+}) => (
   <div>
     <h2 className="text-2xl font-bold mb-6">Configure Workflows</h2>
     <div className="space-y-8">
@@ -263,7 +302,7 @@ const PipelineConfiguration = ({ repos, workflowConfig, onChange }) => (
               height="100%"
               defaultLanguage="yaml"
               value={workflowConfig[repo.id] || ""}
-              onChange={(value) => onChange(value, repo.id)}
+              onChange={(value) => onChange(value || "", repo.id)}
               options={{ minimap: { enabled: false } }}
             />
           </div>
@@ -273,7 +312,13 @@ const PipelineConfiguration = ({ repos, workflowConfig, onChange }) => (
   </div>
 );
 
-const EnvironmentSecrets = ({ secrets, onChange }) => (
+const EnvironmentSecrets = ({ 
+  secrets, 
+  onChange 
+}: { 
+  secrets: { [key: string]: string }; 
+  onChange: (name: string, value: string) => void;
+}) => (
   <div>
     <h2 className="text-2xl font-bold mb-6">Configure Secrets</h2>
     <div className="space-y-4">
@@ -308,6 +353,12 @@ const FinalReview = ({
   secrets,
   paymentComplete,
   txHash,
+}: {
+  repos: Repository[];
+  workflows: { [repoId: string | number]: string };
+  secrets: { [key: string]: string };
+  paymentComplete: boolean;
+  txHash: string;
 }) => (
   <div>
     <h2 className="text-2xl font-bold mb-6">Review Configuration</h2>
