@@ -43,7 +43,8 @@ For a visual representation of the application flow:
 
 Experience LogiChain in action:
 
-[![Watch the Demo](docs/assets/screenshots/demo_thumbnail.png)](https://www.youtube.com/watch?v=your_demo_video_link)
+[![Watch the Demo](https://img.youtube.com/vi/tcoWFSGRcHg/0.jpg)](https://www.youtube.com/watch?v=tcoWFSGRcHg)
+
 
 ---
 
