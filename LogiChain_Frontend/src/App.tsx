@@ -206,9 +206,12 @@ export default function HomePage() {
               infrastructure
             </p>
             <div className="space-x-4">
-              <button className="inline-flex items-center px-8 py-3 border border-transparent text-lg font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-100 transition-colors duration-300 shadow-lg hover:shadow-xl">
+              <Link
+                to="/connect"
+                className="inline-flex items-center px-8 py-3 border border-transparent text-lg font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-100 transition-colors duration-300 shadow-lg hover:shadow-xl"
+              >
                 Start Building Now
-              </button>
+              </Link>
               <button className="inline-flex items-center px-8 py-3 border border-white text-lg font-medium rounded-md text-white hover:bg-white/10 transition-colors duration-300">
                 Schedule Demo
               </button>

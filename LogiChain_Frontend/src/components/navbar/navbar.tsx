@@ -8,6 +8,7 @@ import {
   Database,
   BoxArrowRight,
   X,
+  Book,
 } from "react-bootstrap-icons";
 import { useWallet, addressEllipsis } from "@suiet/wallet-kit";
 
@@ -48,6 +49,32 @@ const Navbar = () => {
     { name: "OKX Wallet", displayName: "OKX" },
   ];
 
+  // Navigation items
+  const navItems = [
+    { path: "/", name: "Home", icon: <House className="w-4 h-4" /> },
+    {
+      path: "/pipelines",
+      name: "Pipelines",
+      icon: <Database className="w-4 h-4" />,
+    },
+    {
+      path: "/runners",
+      name: "Runners",
+      icon: <Laptop className="w-4 h-4" />,
+    },
+    {
+      path: "/attestations",
+      name: "Attestations",
+      icon: <Check2Circle className="w-4 h-4" />,
+    },
+    {
+      path: "https://ronit.gitbook.io/logichain",
+      name: "Docs",
+      icon: <Book className="w-4 h-4" />,
+      external: true,
+    },
+  ];
+
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,37 +88,33 @@ const Navbar = () => {
 
           {/* Navigation Links (hidden on mobile) */}
           <div className="hidden md:flex space-x-1">
-            {[
-              { path: "/", name: "Home", icon: <House className="w-4 h-4" /> },
-              {
-                path: "/pipelines",
-                name: "Pipelines",
-                icon: <Database className="w-4 h-4" />,
-              },
-              {
-                path: "/runners",
-                name: "Runners",
-                icon: <Laptop className="w-4 h-4" />,
-              },
-              {
-                path: "/attestations",
-                name: "Attestations",
-                icon: <Check2Circle className="w-4 h-4" />,
-              },
-            ].map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-1 transition-colors ${
-                  location.pathname === item.path
-                    ? "bg-indigo-50 text-indigo-700"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                {item.icon}
-                <span>{item.name}</span>
-              </Link>
-            ))}
+            {navItems.map((item) =>
+              item.external ? (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-1 transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                >
+                  {item.icon}
+                  <span>{item.name}</span>
+                </a>
+              ) : (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-1 transition-colors ${
+                    location.pathname === item.path
+                      ? "bg-indigo-50 text-indigo-700"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
+                >
+                  {item.icon}
+                  <span>{item.name}</span>
+                </Link>
+              )
+            )}
           </div>
 
           {/* Custom Wallet Connect Button */}

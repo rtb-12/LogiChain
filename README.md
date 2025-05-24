@@ -55,7 +55,7 @@ LogiChain is a decentralized CI/CD orchestration platform that brings trustless 
 
 ## 🔑 Key Features
 
-* **Decentralized Runner Network**: Stake LogiTokens to register self-hosted runner nodes that execute build, test, and deployment jobs in isolated Docker environments.
+* **Decentralized Runner Network**: Stake SUI to register self-hosted runner nodes that execute build, test, and deployment jobs in isolated Docker environments.
 
 * **Cross-Chain Messaging**: Trigger build jobs on-chain through Wormhole VAAs (Verified Action Approvals), enabling secure job orchestration across different blockchains.
 
